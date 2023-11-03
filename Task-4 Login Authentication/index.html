@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Authentication</title>
+    <link rel="stylesheet" href="/style/style.css">
+</head>
+
+<body>
+    <div class="front" id="front-card">
+        <h1>Sign In</h1>
+
+        <p id="email-text">Email</p>
+        <input type="email" name="email" id="email">
+
+
+        <p id="pass-text">Password</p>
+        <input type="password" name="password" id="pass">
+        <button id="log">login</button>
+
+        <p id="text">Don't have an account yet? <a href="#" class="btn">Create Account</a></p>
+
+    </div>
+    <div class="back" id="back-card">
+        <h1>Sign Up</h1>
+
+        <p id="text-usename">Username</p>
+        <input type="text" name="user" id="name">
+        <p id="text-email">Email</p>
+        <input type="email" name="email" id="mail">
+        <p id="text-pass">Password</p>
+        <input type="password" name="pass" id="password">
+        <button id="register">sign up</button>
+
+        <p id="end">Already have an account?<a href="#" class="btn">Login</a></p>
+    </div>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+        import { getDatabase, set, ref,update } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6ip9x8GyEmI0-R5Hga47Ma35JU-yCJIQ",
+            authDomain: "login-authentication-6edaa.firebaseapp.com",
+            databaseURL: "https://login-authentication-6edaa-default-rtdb.firebaseio.com",
+            projectId: "login-authentication-6edaa",
+            storageBucket: "login-authentication-6edaa.appspot.com",
+            messagingSenderId: "1038330698003",
+            appId: "1:1038330698003:web:7b1f49f92027609dcc62e6"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth();
+
+        register.addEventListener('click', (e) => {
+
+            let username = document.getElementById('name').value;
+            let email = document.getElementById('mail').value;
+            let password = document.getElementById('password').value;
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed up 
+                    const user = userCredential.user;
+
+                    set(ref(database, 'users/' + user.uid), {
+                        username: username,
+                        email: email
+                    })
+
+
+                    alert('User Created!');
+                  
+
+                    // ...
+
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(errorMessage);
+                    // ..
+                });
+               
+        });
+
+        log.addEventListener('click', (e) => {
+
+            let email=document.getElementById('email').value;
+            let password=document.getElementById('pass').value;
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    const date=new Date()
+                    update(ref(database, 'users/' + user.uid), {
+                        last_login_Date: date
+                       
+                    });
+                   
+                    alert('User Logged In!');
+                   
+                    // ...
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert(errorMessage);
+
+                });
+        })
+    </script>
+    <script src="/script/script.js"></script>
+</body>
+
+</html>
